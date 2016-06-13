@@ -12,9 +12,7 @@ owner_id = ''
 with open('./owner_id', "r") as f:
     owner_id = f.read()
 
-online = True
-
-while online:
+while True:
     print('Start Test')
 
     # Find catfacts user from members and add to test group
@@ -42,7 +40,6 @@ while online:
         print('Failed')
         m = groupy.object.responses.Member(user_id=owner_id)
         m.post("CatFacts Down")
-        online = False
 
     # Destroy group, occasionally produces harmless errors but works
     try:
