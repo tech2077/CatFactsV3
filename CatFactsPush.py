@@ -1,5 +1,5 @@
 import requests, json, groupy
-from GroupMeBot import GroupMeBot, GroupMeBotFactory
+import GroupMeBot
 from twisted.internet import reactor
 from autobahn.twisted.websocket import connectWS
 
@@ -14,9 +14,9 @@ def getFacts():
     return data['facts']
 
 
-class CatFactsBot(GroupMeBot):
-    def __init__(self):
-        super().__init__()
+class CatFactsBot(GroupMeBot.GroupMeBot):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.facts = getFacts()
 
     def onDirectMessage(self, contents):
@@ -58,7 +58,7 @@ class CatFactsBot(GroupMeBot):
 
 if __name__ == '__main__':
     # Connect to server and start client factory
-    factory = GroupMeBotFactory(url="wss://push.groupme.com/faye", protocol=GroupMeBot)
+    factory = GroupMeBot.GroupMeBotFactory(url="wss://push.groupme.com/faye")
     factory.protocol = CatFactsBot
     connectWS(factory, timeout=70)
 
