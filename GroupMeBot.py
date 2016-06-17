@@ -19,9 +19,9 @@ class GroupMeBot(WebSocketClientProtocol):
         # Setup necessary varibles for state machine
         # and groupme APIs
         self.id = 1
+        self.token = None
+        self.user_id = None
         self.push_state = 'None'
-        self.user_id = groupy.User.get().user_id
-        self.token = groupy.config.API_KEY
         self.client_id = ''
         self.last_ping = time.time()
         self.start_time = time.time()
@@ -30,6 +30,7 @@ class GroupMeBot(WebSocketClientProtocol):
 
     def onConnect(self, response):
         print("Connected")
+        self.user_id = groupy.User.get().user_id
         if self.factory.api_key is not None:
             groupy.config.API_KEY = self.factory.api_key
             self.token = groupy.config.API_KEY
