@@ -9,13 +9,7 @@ from autobahn.twisted.websocket import WebSocketClientProtocol
 class GroupMeBot(WebSocketClientProtocol):
     """Client class for GroupMe push client
     """
-    def __init__(self, *args, **kwargs):
-        self.DEBUG = kwargs.pop('DEBUG', False)
-
-        if self.DEBUG:
-            import txaio
-            txaio.use_twisted()
-            txaio.start_logging(level='debug')
+    def __init__(self):
         # Setup necessary varibles for state machine
         # and groupme APIs
         self.id = 1
@@ -26,10 +20,16 @@ class GroupMeBot(WebSocketClientProtocol):
         self.last_ping = time.time()
         self.start_time = time.time()
         self.timeout = 0
-        super().__init__(*args, **kwargs)
+        super().__init__()
 
     def onConnect(self, response):
+        if self.factory.debug:
+            import txaio
+            txaio.use_twisted()
+            txaio.start_logging(level='debug')
+
         print("Connected")
+
         self.user_id = groupy.User.get().user_id
         if self.factory.api_key is not None:
             groupy.config.API_KEY = self.factory.api_key
@@ -141,6 +141,7 @@ class GroupMeBotFactory(WebSocketClientFactory, ReconnectingClientFactory):
 
     def __init__(self, *args, **kwargs):
         self.api_key = kwargs.pop('api_key', None)
+        self.debug = kwargs.pop('DEBUG', None)
         super().__init__(*args, **kwargs)
 
     def clientConnectionFailed(self, connector, reason):
