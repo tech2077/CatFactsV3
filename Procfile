@@ -1,1 +1,1 @@
-web: python CatFactsPush.py
+web: python OAuthLauncher.py

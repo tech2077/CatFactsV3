@@ -12,6 +12,10 @@ class GroupMeBot(WebSocketClientProtocol):
     def __init__(self, DEBUG = False):
         self.DEBUG = DEBUG
         super().__init__()
+
+        if self.factory.api_key is not None:
+            groupy.config.API_KEY = self.factory.api_key
+
         if DEBUG:
             import txaio
             txaio.use_twisted()
@@ -133,6 +137,12 @@ class GroupMeBotFactory(WebSocketClientFactory, ReconnectingClientFactory):
     initialDelay = 0.1
     jitter = 0
     factor = 0
+
+    def __init__(self, api_key=None):
+        if api_key is not None:
+            self.api_key = api_key
+        else:
+            pass
 
     def clientConnectionFailed(self, connector, reason):
         self.resetDelay()

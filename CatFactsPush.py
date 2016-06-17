@@ -1,7 +1,11 @@
-import requests, json, groupy
-import GroupMeBot
-from twisted.internet import reactor
+import json
+
+import groupy
+import requests
 from autobahn.twisted.websocket import connectWS
+from twisted.internet import reactor
+
+import GroupMeBot
 
 
 def getFacts():
@@ -56,10 +60,14 @@ class CatFactsBot(GroupMeBot.GroupMeBot):
             groupy.attachments.Mentions([reciever_id],
                                         loci=[(0, 1 + len(reciever_name))]).as_dict())
 
-if __name__ == '__main__':
+
+def main(api_key=None):
     # Connect to server and start client factory
-    factory = GroupMeBot.GroupMeBotFactory(url="wss://push.groupme.com/faye")
+    factory = GroupMeBot.GroupMeBotFactory(url="wss://push.groupme.com/faye", api_key=api_key)
     factory.protocol = CatFactsBot
     connectWS(factory, timeout=70)
 
     reactor.run()
+
+if __name__ == '__main__':
+    main()
