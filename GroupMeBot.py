@@ -9,14 +9,10 @@ from autobahn.twisted.websocket import WebSocketClientProtocol
 class GroupMeBot(WebSocketClientProtocol):
     """Client class for GroupMe push client
     """
-    def __init__(self, DEBUG = False):
-        self.DEBUG = DEBUG
-        super().__init__()
+    def __init__(self, *args, **kwargs):
+        self.DEBUG = kwargs.pop('DEBUG', False)
 
-        if self.factory.api_key is not None:
-            groupy.config.API_KEY = self.factory.api_key
-
-        if DEBUG:
+        if self.DEBUG:
             import txaio
             txaio.use_twisted()
             txaio.start_logging(level='debug')
@@ -30,9 +26,13 @@ class GroupMeBot(WebSocketClientProtocol):
         self.last_ping = time.time()
         self.start_time = time.time()
         self.timeout = 0
+        super().__init__(*args, **kwargs)
 
     def onConnect(self, response):
         print("Connected")
+        if self.factory.api_key is not None:
+            groupy.config.API_KEY = self.factory.api_key
+            self.token = groupy.config.API_KEY
         self.log.info(response)
 
     def onOpen(self):
@@ -138,11 +138,9 @@ class GroupMeBotFactory(WebSocketClientFactory, ReconnectingClientFactory):
     jitter = 0
     factor = 0
 
-    def __init__(self, api_key=None):
-        if api_key is not None:
-            self.api_key = api_key
-        else:
-            pass
+    def __init__(self, *args, **kwargs):
+        self.api_key = kwargs.pop('api_key', None)
+        super().__init__(*args, **kwargs)
 
     def clientConnectionFailed(self, connector, reason):
         self.resetDelay()

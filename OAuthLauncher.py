@@ -5,17 +5,22 @@ import CatFactsPush
 
 
 class Simple(resource.Resource):
-    isLeaf = False
+    isLeaf = True
+    factsStarted = False
 
     def render_GET(self, request):
         print(request.args)
-        if 'access_token' in request.args.keys():
-            CatFactsPush.main(request.args['access_token'])
+        if b'access_token' in request.args.keys() and not self.factsStarted:
+            print('Starting')
+            self.factsStarted = True
+            CatFactsPush.main(request.args[b'access_token'][0].decode())
             return b"<head><p>CatFacts Authenticated</p></head>"
-        else:
+        elif not self.factsStarted:
             return redirectTo(
                 b"https://oauth.groupme.com/oauth/authorize?client_id=698dYmSqmHXVDKwHAaetmEKYMpb5ZsCDZQOza8V8k3wCtMPj",
                 request)
+        else:
+            return b"<head><p>CatFacts Authenticated</p></head>"
 
 site = server.Site(Simple())
 

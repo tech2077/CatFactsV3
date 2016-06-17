@@ -62,12 +62,13 @@ class CatFactsBot(GroupMeBot.GroupMeBot):
 
 
 def main(api_key=None):
+    print("CatFacts Starting")
     # Connect to server and start client factory
     factory = GroupMeBot.GroupMeBotFactory(url="wss://push.groupme.com/faye", api_key=api_key)
     factory.protocol = CatFactsBot
     connectWS(factory, timeout=70)
 
-    reactor.run()
 
 if __name__ == '__main__':
     main()
+    reactor.run()
