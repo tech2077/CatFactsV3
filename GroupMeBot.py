@@ -30,10 +30,10 @@ class GroupMeBot(WebSocketClientProtocol):
 
         print("Connected")
 
-        self.user_id = groupy.User.get().user_id
         if self.factory.api_key is not None:
             groupy.config.API_KEY = self.factory.api_key
             self.token = groupy.config.API_KEY
+        self.user_id = groupy.User.get().user_id
         self.log.info(response)
 
     def onOpen(self):
@@ -96,7 +96,8 @@ class GroupMeBot(WebSocketClientProtocol):
         """Callback for socket ping"""
         super().onPing(payload)
         self.log.debug("Pinged: {}".format(payload))
-        self.log.debug(self.last_ping, time.time() - self.last_ping)
+        self.log.debug(self.last_ping)
+        self.log.debug(time.time() - self.last_ping)
         # If groupme's "ping" takes longer than 32 seconds, reset connection
         if not (not (time.time() - self.last_ping > 32) and not (time.time() - self.start_time > self.timeout)):
             self.sendClose()
@@ -129,7 +130,7 @@ class GroupMeBot(WebSocketClientProtocol):
         """debug wrapper for """
         super().sendMessage(payload, isBinary=False, fragmentSize=None,
                             sync=False, doNotCompress=False)
-        self.log.debug(payload, self.DEBUG)
+        self.log.debug(payload)
 
 
 class GroupMeBotFactory(WebSocketClientFactory, ReconnectingClientFactory):
